@@ -654,8 +654,20 @@ section{
 /* =====================================================================
    ✦ PERSONALIZE EVERYTHING HERE ✦
    This is the only place you need to edit to make this website yours.
-   Scroll down past CONFIG to find the engine — you shouldn't need to
-   touch that part.
+   
+   📁 IMAGE FOLDER SETUP:
+   1. Create a folder named "img" in the same location as this HTML file
+   2. Put all your images inside the "img" folder
+   3. Reference them below as "img/your-image-name.jpg"
+   
+   Example folder structure:
+   your-project/
+   ├── index.html
+   └── img/
+       ├── photo1.jpg
+       ├── photo2.jpg
+       ├── memory1.jpg
+       └── memory2.jpg
    ===================================================================== */
 const CONFIG = {
 
@@ -667,33 +679,47 @@ const CONFIG = {
   yourSignature: "Your Brother From Another Mother",
 
   heroTitle: "Happy Birthday Nanba!!!! ❤️",
-  heroSub: "Eighteen years of inside jokes, late-night calls, and a friendship I'd choose again in every lifetime. Today, this whole world is just for you.",
+  heroSub: "Six month inside jokes, late-night calls, and a friendship I'd choose again in every lifetime. Today, this whole world is just for you.",
 
   finalMessage: "No matter where life takes us, you'll always be my favorite person. Happy Birthday!",
 
   // --- Stats section ---
-  // "years" field now shows Months of Friendship (label updated below in the HTML)
   stats: {
     years: 6,
     memories: 1,
     adventures: 0
   },
 
-  // --- Gallery photos. Replace src with your own image URLs, or just
-  // use the "Add Photos" button on the live page (saved in this browser). ---
+  // --- Gallery photos -----------------------------------------------------
+  // 📸 Put your images in the "img" folder and reference them below
+  // Format: { src: "img/filename.jpg", caption: "Your caption here" }
+  // Make sure the filename matches EXACTLY (including .jpg extension)
   gallery: [
-    { src: "", caption: "That one summer" },
-    { src: "", caption: "Road trip chaos" },
-    { src: "", caption: "Best night ever" },
-    { src: "", caption: "Just us" }
+    { src: "img/Hand.jpeg", caption: "Happy Birthday! This is my Hand" },
+    { src: "img/birthday.jpeg", caption: "Happy Birthday! Nanbaa" },
+    { src: "img/memory4.jpeg", caption: "Happy Birthday Mass Mathan" },
+    { src: "img/Me.jpeg", caption: "This is me!!" },
+    { src: "img/Black.jpeg", caption: "This is me!!" },
+    { src: "img/Brown.jpeg", caption: "This is me!!" }
   ],
 
-  // --- Memory timeline. Add as many as you want. ---
+  // --- Memory timeline -----------------------------------------------------
+  // 📸 Timeline photos also go in the "img" folder
+  // Format: { date: "Year", title: "Title", message: "Story", photo: "img/filename.jpg" }
   timeline: [
-    { date: "2014", title: "How We Met", message: "Two strangers, one classroom, and a joke so bad it somehow made us friends for life.", photo: "" },
-    { date: "2017", title: "The Road Trip", message: "No map, no plan, just us and a playlist that's still stuck in my head.", photo: "" },
-    { date: "2020", title: "The Hard Year", message: "You were the one phone call I never had to think twice about making.", photo: "" },
-    { date: "2023", title: "Still Going Strong", message: "Different cities, same friendship. Some things just don't fade.", photo: "" }
+    { 
+      date: "2026", 
+      title: "Intro", 
+      message: "Nama nalla pesikitta meet .", 
+      photo: "img/Meet.jpeg" 
+    },
+    { 
+      date: "2026", 
+      title: "First Day Working Mathan", 
+      message: "First day nee work ponna photo .", 
+      photo: "img/Working.jpeg" 
+    }
+   
   ],
 
   // --- Reasons why they're special ---
@@ -745,18 +771,17 @@ function loadSavedData(){
 function persist(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      gallery: state.gallery,
-      timeline: state.timeline,
       letterText: state.letterText
     }));
   }catch(e){ /* storage full or unavailable — ignore */ }
 }
 
+// ✅ UPDATED: Always use CONFIG values directly (no localStorage for gallery/timeline)
 const saved = loadSavedData();
 const state = {
-  gallery: (saved.gallery && saved.gallery.length) ? saved.gallery : CONFIG.gallery.filter(g=>g.src),
-  timeline: (saved.timeline && saved.timeline.length) ? saved.timeline : CONFIG.timeline,
-  letterText: saved.letterText || CONFIG.letterText
+  gallery: CONFIG.gallery.filter(g => g.src),  // Always use CONFIG gallery
+  timeline: CONFIG.timeline,                    // Always use CONFIG timeline
+  letterText: saved.letterText || CONFIG.letterText  // Only letter can be saved
 };
 
 /* ---------------- Ambient star canvas ---------------- */
@@ -831,11 +856,9 @@ function launchDiwaliVedi(){
   const vediColors = ['#ff5e2c', '#ffd23f', '#ff3b3b', '#9c8038', '#ffffff', '#ff8a3d', '#ffe9a8'];
 
   function singleCracker(){
-    // random spot in the sky for the cracker to burst
     const originX = 0.12 + Math.random() * 0.76;
     const originY = 0.15 + Math.random() * 0.35;
 
-    // the upward "launch" trail
     confetti({
       particleCount: 1,
       startVelocity: 0,
@@ -843,7 +866,6 @@ function launchDiwaliVedi(){
       origin: { x: originX, y: 0.95 }
     });
 
-    // the burst itself, shaped like a cracker explosion
     confetti({
       particleCount: 55,
       spread: 360,
@@ -857,7 +879,6 @@ function launchDiwaliVedi(){
       shapes: ['circle', 'square']
     });
 
-    // a sparkly second-stage pop
     setTimeout(() => {
       confetti({
         particleCount: 25,
@@ -873,7 +894,6 @@ function launchDiwaliVedi(){
     }, 180);
   }
 
-  // a volley of crackers going off one after another, Diwali-style
   const totalCrackers = 9;
   for (let i = 0; i < totalCrackers; i++){
     setTimeout(singleCracker, i * 380 + Math.random() * 150);
@@ -1010,16 +1030,12 @@ function animateHeroTitle(){
     });
     gsap.fromTo('.sub', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, delay: words.length*0.12 + 0.4 });
   } else {
-    // GSAP failed to load (blocked CDN, slow network, etc.) — force every
-    // word span visible directly so the title never stays invisible.
     document.querySelectorAll('#hero-title .word').forEach(w => {
       w.style.opacity = 1;
     });
     subEl.style.opacity = 1;
   }
 
-  // Safety net: even if GSAP loaded but something stalls the animation
-  // (e.g. tab was backgrounded), force everything visible after 3s.
   setTimeout(() => {
     document.querySelectorAll('#hero-title .word').forEach(w => {
       w.style.opacity = 1;
@@ -1049,7 +1065,7 @@ function tryPlayMusic(){
   const player = document.getElementById('music-player');
   const audio = document.getElementById('bgm');
 
-  if (!CONFIG.songs || !CONFIG.songs.length){ return; } // no playlist — keep player hidden
+  if (!CONFIG.songs || !CONFIG.songs.length){ return; }
 
   music.el = audio;
   music.list = CONFIG.songs;
@@ -1102,7 +1118,6 @@ function loadSong(orderIdx, autoplay){
   if (autoplay){
     music.el.volume = 0.55;
     music.el.play().catch(() => {
-      // autoplay blocked by browser — user can press play manually
       setPlayIcon(false);
     });
   }
@@ -1156,7 +1171,7 @@ function renderGallery(){
   if (!state.gallery.length){
     const empty = document.createElement('div');
     empty.className = 'polaroid-empty';
-    empty.textContent = 'No photos yet — click "Add Photos" to start your album.';
+    empty.textContent = 'No photos yet — configure images in CONFIG section.';
     grid.appendChild(empty);
     return;
   }
@@ -1193,7 +1208,6 @@ document.getElementById('gallery-input').addEventListener('change', (e) => {
       pending--;
       if (pending === 0){
         renderGallery();
-        persist();
       }
     };
     reader.readAsDataURL(file);
@@ -1267,7 +1281,6 @@ document.getElementById('edit-save').addEventListener('click', () => {
   }
   document.getElementById('edit-modal').classList.remove('active');
   renderTimeline();
-  persist();
 });
 document.getElementById('add-memory-btn').addEventListener('click', () => openEditModal(null));
 
@@ -1368,7 +1381,7 @@ document.getElementById('replay-btn').addEventListener('click', () => {
 
 /* ---------------- Init ---------------- */
 window.addEventListener('DOMContentLoaded', () => {
-  document.body.style.overflow = 'hidden'; // locked until unlock
+  document.body.style.overflow = 'hidden';
   renderGallery();
   renderTimeline();
   renderReasons();
@@ -1376,7 +1389,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderFinal();
   if (window.AOS) AOS.init({ duration: 900, once: true, offset: 60 });
 
-  // focus first code box
   const firstInput = document.querySelector('#code-row input');
   if (firstInput) firstInput.focus();
 });
